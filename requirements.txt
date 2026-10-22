@@ -1,0 +1,36 @@
+# Core
+streamlit==1.28.0
+python-dotenv==1.0.0
+
+# OpenAI - VERSION ANTIGUA
+openai==0.28.1
+
+# LangChain - VERSIONES QUE SÍ FUNCIONAN JUNTAS
+langchain==0.0.354
+langchain-community==0.0.20
+langchain-core==0.1.23
+
+# Vector Store
+chromadb==0.4.15
+
+# PDF Processing
+pypdf==3.17.0
+
+# Data
+pandas==2.0.0
+# Versiones fijas para que pandas y streamlit 1.28 sean compatibles
+numpy==1.26.4
+pyarrow==14.0.2
+tiktoken==0.5.1
+
+
+# Seguridad - hash de contraseñas
+bcrypt
+
+
+# Copiloto de reunión - grabación de micrófono (app aparte)
+streamlit-mic-recorder
+
+
+# Video a Manual - generación de PDF
+fpdf2

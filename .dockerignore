@@ -1,0 +1,32 @@
+# No copiar al contenedor (mantiene la imagen liviana y evita subir secretos)
+.git/
+__pycache__/
+*.py[cod]
+*.so
+venv/
+.venv/
+env/
+ENV/
+
+# Datos locales / generados (se reconstruyen en el servidor)
+data/db/
+data/sessions/
+data/usuarios.json
+data/estadisticas.json
+logs/
+*.log
+
+# Secretos / entorno (NO incluir en la imagen)
+.streamlit/secrets.toml
+.env
+.env.local
+github_token.txt
+
+# Scripts de Windows / utilidades que no se usan en el contenedor
+*.bat
+
+# Editores / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

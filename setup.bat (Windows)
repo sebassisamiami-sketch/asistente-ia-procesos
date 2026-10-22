@@ -1,0 +1,30 @@
+@echo off
+
+echo 🔧 Setup ProcesosIAEngine v2.0
+echo ==================================
+
+REM 1. Crear venv
+echo 📦 Creando virtual environment...
+python -m venv venv
+
+REM 2. Activar
+call venv\Scripts\activate.bat
+
+REM 3. Upgrade pip
+echo ⬆️  Upgrading pip...
+python -m pip install --upgrade pip setuptools wheel
+
+REM 4. Instalar requirements
+echo 📚 Instalando dependencias...
+pip install -r requirements.txt
+
+REM 5. Verificar
+echo ✅ Verificando instalación...
+pip list | findstr /E "streamlit langchain chromadb"
+
+echo.
+echo ✨ Setup completo!
+echo Ejecuta: venv\Scripts\activate.bat
+echo Luego: streamlit run app.py
+
+pause

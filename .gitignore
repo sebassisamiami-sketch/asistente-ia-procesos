@@ -1,0 +1,71 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Streamlit Secrets (NO subir API keys)
+.streamlit/secrets.toml
+
+# ChromaDB & Data (Archivos locales, no producción)
+data/db/
+data/sessions/
+data/usuarios.json
+data/estadisticas.json
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Environment Variables (IMPORTANTE: Contiene API Keys)
+.env
+.env.local
+.env.*.local
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# OS
+Thumbs.db
+Desktop.ini
+
+
+# Token para control remoto del servidor (NO subir)
+github_token.txt

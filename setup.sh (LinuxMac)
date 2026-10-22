@@ -1,0 +1,32 @@
+#!/bin/bash
+
+echo "🔧 Setup ProcesosIAEngine v2.0"
+echo "=================================="
+
+# 1. Crear venv
+echo "📦 Creando virtual environment..."
+python -m venv venv
+
+# 2. Activar
+source venv/bin/activate
+
+# 3. Upgrade pip
+echo "⬆️  Upgrading pip..."
+python -m pip install --upgrade pip setuptools wheel
+
+# 4. Instalar torch
+echo "🔥 Instalando PyTorch (puede tomar 5 min)..."
+pip install torch==2.2.0 --index-url https://download.pytorch.org/whl/cpu
+
+# 5. Instalar requirements
+echo "📚 Instalando dependencias..."
+pip install -r requirements.txt
+
+# 6. Verificar
+echo "✅ Verificando instalación..."
+pip list | grep -E "streamlit|langchain|chromadb"
+
+echo ""
+echo "✨ Setup completo!"
+echo "Ejecuta: source venv/bin/activate"
+echo "Luego: streamlit run app.py"

@@ -1,0 +1,30 @@
+[theme]
+base = "dark"
+primaryColor = "#8ab4f8"
+backgroundColor = "#212121"
+secondaryBackgroundColor = "#2f2f2f"
+textColor = "#ececf1"
+font = "sans serif"
+
+[server]
+headless = true
+port = 8501
+enableCORS = false
+enableXsrfProtection = true
+maxUploadSize = 200
+# Desactiva el observador de archivos para evitar el error
+# "inotify watch limit reached" en Streamlit Cloud
+fileWatcherType = "none"
+
+[browser]
+gatherUsageStats = false
+serverAddress = "0.0.0.0"
+
+# Oculta la barra de herramientas para los visitantes (Manage app, Deploy, etc.)
+# para que la app se vea más profesional, sobre todo en el acceso de invitados.
+[client]
+toolbarMode = "minimal"
+
+[runner]
+magicEnabled = true
+fastReruns = true
