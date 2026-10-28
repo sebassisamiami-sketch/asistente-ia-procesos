@@ -21,6 +21,8 @@ import logging
 
 import openai
 
+import config_local
+
 logger = logging.getLogger(__name__)
 
 MAX_BYTES = 24 * 1024 * 1024  # límite práctico de Whisper (25MB)
@@ -94,7 +96,23 @@ def _segmentar(audio_path: str):
 
 
 def transcribir(path: str) -> str:
-    """Transcribe un archivo de audio/video con Whisper."""
+    """Transcribe un archivo de audio/video.
+
+    - En modo local (Ollama): usa faster-whisper offline. No necesita trocear
+      el archivo porque no hay límite de 25MB.
+    - En modo nube: usa Whisper de OpenAI (whisper-1), troceando si supera 25MB.
+    """
+    # --- Modo local: faster-whisper ---
+    if config_local.USAR_OLLAMA:
+        try:
+            from transcripcion_local import transcribir_archivo
+            return transcribir_archivo(path, idioma="es")
+        except Exception as e:
+            logger.error(f"Error en transcripción local: {e}")
+            return f"[Error transcribiendo en local: {e}]"
+
+    # --- Modo nube: Whisper de OpenAI ---
+    config_local.configurar_sdk_openai()
     openai.api_key = _api_key()
     partes = [path]
     try:
@@ -115,17 +133,20 @@ def transcribir(path: str) -> str:
     return "\n".join(textos).strip()
 
 
-def _gpt(mensajes, max_tokens=1500, temp=0.2, model="gpt-4o-mini"):
-    """Llama al modelo. Usa gpt-4o-mini (más detallado) con respaldo a gpt-3.5-turbo."""
-    openai.api_key = _api_key()
+def _gpt(mensajes, max_tokens=1500, temp=0.2, model=None):
+    """Llama al modelo de chat (Ollama en local u OpenAI en la nube)."""
+    modelo_cfg = config_local.configurar_sdk_openai()
+    if not config_local.USAR_OLLAMA:
+        openai.api_key = _api_key()
+    model = model or modelo_cfg
     try:
         resp = openai.ChatCompletion.create(
             model=model, temperature=temp, max_tokens=max_tokens, messages=mensajes,
         )
     except Exception as e:
-        logger.warning(f"Modelo {model} no disponible ({e}); usando gpt-3.5-turbo")
+        logger.warning(f"Modelo {model} no disponible ({e}); reintentando con {modelo_cfg}")
         resp = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", temperature=temp,
+            model=modelo_cfg, temperature=temp,
             max_tokens=min(max_tokens, 4000), messages=mensajes,
         )
     return resp["choices"][0]["message"]["content"].strip()

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>En mantenimiento</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+  <div class="login-bg">
+    <div class="login-card center">
+      <div style="font-size:40px">🛠️</div>
+      <h1>Servidor en mantenimiento</h1>
+      <p class="sub">El asistente no está disponible por ahora. Vuelve más tarde.</p>
+      <a class="btn btn-ghost" href="{{ url_for('logout') }}">Cerrar sesión</a>
+    </div>
+  </div>
+</body>
+</html>

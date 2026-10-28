@@ -12,6 +12,8 @@ import logging
 
 import openai
 
+import config_local
+
 logger = logging.getLogger(__name__)
 
 DOMAIN = (
@@ -50,7 +52,11 @@ def _key():
 def analizar_imagen(pregunta: str, imagen_bytes: bytes,
                     mime: str = "image/png", contexto_doc: str = "") -> str:
     """Analiza la imagen + la consulta y devuelve una respuesta de ayuda."""
-    openai.api_key = _key()
+    # Configura el SDK openai según el proveedor. En modo Ollama apunta al
+    # endpoint /v1 local y el modelo con visión es llava.
+    config_local.configurar_sdk_openai()
+    if not config_local.USAR_OLLAMA:
+        openai.api_key = _key()
     b64 = base64.b64encode(imagen_bytes).decode()
     data_url = f"data:{mime or 'image/png'};base64,{b64}"
 
@@ -75,8 +81,14 @@ def analizar_imagen(pregunta: str, imagen_bytes: bytes,
         {"type": "image_url", "image_url": {"url": data_url}},
     ]
 
+    # En local: solo el modelo de visión de Ollama (llava). En nube: gpt-4o-mini -> gpt-4o.
+    if config_local.USAR_OLLAMA:
+        modelos = (config_local.OLLAMA_VISION_MODEL,)
+    else:
+        modelos = ("gpt-4o-mini", "gpt-4o")
+
     ultima = None
-    for modelo in ("gpt-4o-mini", "gpt-4o"):
+    for modelo in modelos:
         try:
             resp = openai.ChatCompletion.create(
                 model=modelo,

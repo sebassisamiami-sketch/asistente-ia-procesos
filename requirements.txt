@@ -1,8 +1,8 @@
-# Core
-streamlit==1.28.0
+# Core — app web con Flask (ya NO se usa Streamlit)
+flask==3.0.3
 python-dotenv==1.0.0
 
-# OpenAI - VERSION ANTIGUA
+# OpenAI SDK (se reutiliza también para hablar con el endpoint local de Ollama)
 openai==0.28.1
 
 # LangChain - VERSIONES QUE SÍ FUNCIONAN JUNTAS
@@ -18,7 +18,6 @@ pypdf==3.17.0
 
 # Data
 pandas==2.0.0
-# Versiones fijas para que pandas y streamlit 1.28 sean compatibles
 numpy==1.26.4
 pyarrow==14.0.2
 tiktoken==0.5.1
@@ -28,9 +27,12 @@ tiktoken==0.5.1
 bcrypt
 
 
-# Copiloto de reunión - grabación de micrófono (app aparte)
-streamlit-mic-recorder
-
-
 # Video a Manual - generación de PDF
 fpdf2
+
+
+# ===== MODO LOCAL (Ollama) =====
+# El chat/RAG/embeddings/visión usan Ollama vía la API local (requests, ya incluido
+# en langchain-community). Solo la transcripción necesita una librería extra:
+# faster-whisper corre Whisper offline en GPU o CPU (no necesita OpenAI).
+faster-whisper==1.0.3

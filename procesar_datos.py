@@ -13,8 +13,9 @@ from typing import List, Dict, Tuple, Any
 from datetime import datetime
 from pypdf import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+
+import config_local
 
 logger = logging.getLogger(__name__)
 
@@ -43,11 +44,9 @@ class DataProcessor:
         logger.info("DataProcessor inicializado")
     
     def _inicializar_embeddings(self):
-        """Inicializar embeddings"""
+        """Inicializar embeddings (mismo modelo que usa ia_motor para consultar)"""
         if not self.embeddings:
-            self.embeddings = OpenAIEmbeddings(
-                openai_api_key=self.api_key
-            )
+            self.embeddings = config_local.crear_embeddings()
     
     def _cargar_vectorstore(self, reset: bool = False):
         """Cargar vectorstore. Si reset es True, usa un nombre de colección nuevo."""

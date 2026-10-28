@@ -83,23 +83,38 @@ def _get_key():
     return os.getenv("OPENAI_API_KEY", "")
 
 import openai
-openai.api_key = _get_key()
+import config_local
+
+# Configura el SDK según el proveedor (en local apunta a Ollama /v1).
+_MODELO_CHAT = config_local.configurar_sdk_openai()
+if not config_local.USAR_OLLAMA:
+    openai.api_key = _get_key()
 
 
 def transcribir(audio_bytes: bytes) -> str:
-    """Transcribe audio (bytes WAV) usando Whisper."""
+    """Transcribe audio (bytes WAV).
+
+    Local: faster-whisper offline. Nube: Whisper de OpenAI (whisper-1).
+    """
     try:
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
             tmp.write(audio_bytes)
             ruta = tmp.name
-        with open(ruta, "rb") as f:
-            tr = openai.Audio.transcribe("whisper-1", f)
+
+        if config_local.USAR_OLLAMA:
+            from transcripcion_local import transcribir_archivo
+            texto = transcribir_archivo(ruta, idioma="es")
+        else:
+            with open(ruta, "rb") as f:
+                tr = openai.Audio.transcribe("whisper-1", f)
+            # openai 0.28 devuelve dict-like
+            texto = tr["text"] if isinstance(tr, dict) else getattr(tr, "text", "")
+
         try:
             os.remove(ruta)
         except Exception:
             pass
-        # openai 0.28 devuelve dict-like
-        return tr["text"] if isinstance(tr, dict) else getattr(tr, "text", "")
+        return texto
     except Exception as e:
         return f"__ERROR__: {e}"
 
@@ -120,7 +135,7 @@ def responder(pregunta: str, modo: str) -> str:
         )
     try:
         resp = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=_MODELO_CHAT,
             temperature=0.3,
             max_tokens=400,
             messages=[

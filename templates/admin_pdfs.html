@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block nav_pdfs %}active{% endblock %}
+{% block title %}Procesar PDFs · Admin{% endblock %}
+{% block content %}
+<h1>Procesar PDFs</h1>
+<p class="sub">Indexa los manuales en la base vectorial (ChromaDB) con los embeddings locales. Cada carpeta de la raíz con PDFs es una sección.</p>
+
+<div class="card">
+  <form method="post" style="margin-bottom:14px">
+    <button class="btn" type="submit" name="carpeta" value="__todas__">🔄 Procesar TODAS las carpetas</button>
+  </form>
+  <table>
+    <tr><th>Carpeta</th><th>PDFs</th><th></th></tr>
+    {% for c in carpetas %}
+    <tr>
+      <td>{{ c }}</td>
+      <td class="muted">—</td>
+      <td style="text-align:right">
+        <form method="post"><button class="btn btn-ghost btn-sm" name="carpeta" value="{{ c }}">Procesar</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not carpetas %}<tr><td colspan="3" class="muted">No se encontraron carpetas con PDFs.</td></tr>{% endif %}
+  </table>
+</div>
+
+{% if resultado %}
+<div class="card">
+  <h2 style="margin-top:0">Resultado</h2>
+  <table>
+    <tr><th>Carpeta</th><th>Procesados</th><th>Chunks</th><th>Estado</th></tr>
+    {% for r in resultado %}
+    <tr>
+      <td>{{ r.carpeta }}</td>
+      <td>{{ r.archivos_procesados if r.archivos_procesados is defined else '—' }}</td>
+      <td>{{ r.chunks_creados if r.chunks_creados is defined else '—' }}</td>
+      <td>{{ '✅ OK' if r.exito else '❌ ' ~ (r.error or 'error') }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+{% endblock %}

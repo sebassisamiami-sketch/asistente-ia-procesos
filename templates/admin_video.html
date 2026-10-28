@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block nav_video %}active{% endblock %}
+{% block title %}Video a manual · Admin{% endblock %}
+{% block content %}
+<h1>Video a manual</h1>
+<p class="sub">Transcribe un video/audio de capacitación (faster-whisper, local) y genera un manual en PDF.</p>
+
+<div class="card">
+  <form method="post" enctype="multipart/form-data">
+    <div class="field"><label>Archivo de video o audio</label>
+      <input type="file" name="video" accept="video/*,audio/*" required></div>
+    <div class="field"><label>Título del manual</label>
+      <input name="titulo" placeholder="Manual de..." required></div>
+    <button class="btn" type="submit">⚙️ Generar manual (descarga PDF)</button>
+  </form>
+  <p class="muted" style="margin-top:12px">El proceso puede tardar según la duración del video. Requiere <code>ffmpeg</code> para extraer el audio.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block nav_chat %}active{% endblock %}
+{% block title %}Chat · Asistente IA de Procesos{% endblock %}
+
+{% block content %}
+<div class="chat-wrap">
+  <div class="chat-head">
+    <div>
+      <h1>Chat de procesos</h1>
+      <p class="sub" style="margin:0">Responde con base en los manuales (RAG). No inventa pasos.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <label class="toggle"><input type="checkbox" id="modoExperto" style="width:auto"> 🎓 Modo experto</label>
+      <form method="post" action="{{ url_for('chat_limpiar') }}" onsubmit="return confirm('¿Limpiar el chat?')">
+        <button class="btn btn-ghost btn-sm" type="submit">Limpiar</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="chat-log" id="log">
+    {% if not historial %}
+      <div class="msg assistant">
+        <div class="avatar">🤖</div>
+        <div class="bubble"><div class="md">¡Hola! Pregúntame por un caso: **radicar una solicitud**, **reasignar un caso bloqueado**, **cerrar un caso**, **corregir datos de una factura** o **validar pagos no aplicados**.</div></div>
+      </div>
+    {% endif %}
+    {% for m in historial %}
+      {% if m.mensaje_original %}
+      <div class="msg user">
+        <div class="avatar">🧑</div>
+        <div class="bubble"><div class="md">{{ m.mensaje_original }}</div></div>
+      </div>
+      {% endif %}
+      <div class="msg assistant">
+        <div class="avatar">🤖</div>
+        <div class="bubble">
+          <div class="md">{{ m.respuesta }}</div>
+          {% if m.modo %}<span class="tag">{{ m.modo }}</span>{% endif %}
+          {% for s in m.sources %}
+          <details class="fuente">
+            <summary>📄 Fuente: {{ s.metadata.titulo if s.metadata and s.metadata.titulo else s.archivo }}</summary>
+            <pre>{{ s.contenido }}</pre>
+          </details>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="img-bar">
+    <input type="file" id="imgInput" accept="image/*" style="max-width:260px">
+    <button class="btn btn-ghost btn-sm" id="btnImg" type="button">Analizar imagen</button>
+    <span class="muted">Adjunta una captura de la plataforma o del gestor de tickets.</span>
+  </div>
+
+  <form class="chat-form" id="chatForm">
+    <textarea id="input" placeholder="Escribe tu pregunta..." required></textarea>
+    <button class="btn" type="submit">Enviar</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.URLS = {
+    chat: "{{ url_for('api_chat') }}",
+    imagen: "{{ url_for('api_imagen') }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

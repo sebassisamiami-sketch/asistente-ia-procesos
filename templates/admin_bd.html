@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block nav_bd %}active{% endblock %}
+{% block title %}Estado de BD · Admin{% endblock %}
+{% block content %}
+<h1>Estado de la base vectorial</h1>
+<p class="sub">Documentos indexados en ChromaDB.</p>
+
+<div class="kpi">
+  <div class="box"><div class="num">{{ estado.documentos }}</div><div class="lbl">Fragmentos indexados</div></div>
+  <div class="box"><div class="num">{{ estado.tamaño_mb }} MB</div><div class="lbl">Tamaño en disco</div></div>
+  <div class="box"><div class="num">{{ estado.estado }}</div><div class="lbl">Estado</div></div>
+</div>
+
+<div class="card" style="margin-top:18px">
+  <h2 style="margin-top:0">Reiniciar base vectorial</h2>
+  <p class="muted">Cambia a una colección limpia. Tendrás que volver a procesar los PDFs.</p>
+  <form method="post" onsubmit="return confirm('¿Reiniciar la base de datos vectorial?')">
+    <button class="btn btn-danger" type="submit">🗑️ Limpiar base de datos</button>
+  </form>
+</div>
+{% endblock %}

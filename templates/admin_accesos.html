@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block nav_accesos %}active{% endblock %}
+{% block title %}Registros de acceso · Admin{% endblock %}
+{% block content %}
+<h1>Registros de acceso</h1>
+<p class="sub">Últimos ingresos (más recientes primero).</p>
+<div class="card">
+  <table>
+    <tr><th>Fecha</th><th>Usuario</th><th>Rol</th><th>Acción</th><th>IP</th></tr>
+    {% for f in filas %}
+    <tr>
+      <td>{{ f.Timestamp }}</td><td>{{ f.Usuario }}</td><td>{{ f.Rol }}</td>
+      <td>{{ f['Acción'] }}</td><td class="muted">{{ f.IP }}</td>
+    </tr>
+    {% endfor %}
+    {% if not filas %}<tr><td colspan="5" class="muted">Sin registros todavía.</td></tr>{% endif %}
+  </table>
+</div>
+{% endblock %}

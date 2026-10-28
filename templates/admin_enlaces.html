@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block nav_enlaces %}active{% endblock %}
+{% block title %}Enlaces de acceso · Admin{% endblock %}
+{% block content %}
+<h1>Enlaces de invitación</h1>
+<p class="sub">Genera un enlace para que alguien entre como <strong>Invitado</strong> sin usuario ni contraseña. Caduca solo.</p>
+
+<div class="card">
+  <form method="post" class="row">
+    <div class="field" style="min-width:160px">
+      <label>Validez (días)</label>
+      <input name="dias" type="number" value="7" min="1" max="60">
+    </div>
+    <div class="field"><button class="btn" type="submit">🔗 Generar enlace</button></div>
+  </form>
+
+  {% if enlace %}
+  <div class="flash flash-ok" style="margin-top:6px">
+    Enlace generado. Caduca el <strong>{{ expira }}</strong>.
+  </div>
+  <p><code id="enlace">{{ enlace }}</code></p>
+  <button class="btn btn-ghost btn-sm" type="button"
+    onclick="navigator.clipboard.writeText(document.getElementById('enlace').textContent)">Copiar</button>
+  {% endif %}
+</div>
+<p class="muted">Define <code>INVITE_SEED</code> en el <code>.env</code> para que los enlaces sigan valiendo tras reiniciar.</p>
+{% endblock %}

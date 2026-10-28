@@ -52,15 +52,16 @@ from typing import Dict, List
 def inicializar_sistema():
     """Inicializar sistema una sola vez"""
     from dotenv import load_dotenv
-    
+
     # Cargar variables de entorno
     load_dotenv()
-    
-    # Verificar API Key
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
+
+    # Verificar API Key SOLO si el proveedor es OpenAI (nube).
+    # En modo local (LLM_PROVIDER=ollama) no hace falta ninguna clave.
+    import config_local
+    if config_local.requiere_openai_key() and not os.getenv("OPENAI_API_KEY"):
         st.error("❌ OPENAI_API_KEY no configurada")
-        st.info("Por favor, configura tu API key en Streamlit Cloud → Settings → Secrets")
+        st.info("Configura tu API key en el archivo .env, o usa LLM_PROVIDER=ollama para correr 100% en local.")
         st.stop()
     
     # Crear directorios necesarios

@@ -12,13 +12,13 @@ import unicodedata
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from pathlib import Path
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain_community.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 from langchain.schema import HumanMessage, AIMessage
 from langchain.prompts import PromptTemplate
+
+import config_local
 
 logger = logging.getLogger(__name__)
 
@@ -125,15 +125,18 @@ class ProcesosIAEngine:
         
         logger.info("🚀 Inicializando ProcesosIAEngine...")
         
-        # Validar API Key
+        # Validar API Key (solo si el proveedor es OpenAI en la nube)
         self.api_key = os.getenv("OPENAI_API_KEY")
-        if not self.api_key:
+        if config_local.requiere_openai_key() and not self.api_key:
             raise ValueError(
                 "❌ OPENAI_API_KEY no encontrada en .env\n"
                 "Por favor crea archivo .env con: OPENAI_API_KEY=sk-..."
             )
-        
-        logger.info(f"✅ API Key detectada: {self.api_key[:20]}...")
+
+        if config_local.USAR_OLLAMA:
+            logger.info(f"✅ Proveedor local Ollama: {config_local.OLLAMA_MODEL}")
+        else:
+            logger.info(f"✅ API Key detectada: {str(self.api_key)[:20]}...")
         
         # Inicializar componentes
         self.embeddings = None
@@ -169,13 +172,10 @@ class ProcesosIAEngine:
             raise
     
     def _crear_embeddings(self):
-        """Crear embeddings de OpenAI"""
+        """Crear embeddings (Ollama en local u OpenAI en la nube)"""
         logger.info("🔄 Creando embeddings...")
         try:
-            from langchain.embeddings import OpenAIEmbeddings
-            self.embeddings = OpenAIEmbeddings(
-                openai_api_key=self.api_key
-            )
+            self.embeddings = config_local.crear_embeddings()
             logger.info("✅ Embeddings creados")
         except Exception as e:
             logger.error(f"❌ Error creando embeddings: {e}")
@@ -202,18 +202,13 @@ class ProcesosIAEngine:
             self.vectorstore = None
     
     def _crear_llm(self):
-        """Crear instancia de GPT-4o-mini"""
+        """Crear instancia del LLM de chat (Ollama en local u OpenAI en la nube)"""
         logger.info("🔄 Creando LLM...")
         try:
-            import openai
-            openai.api_key = self.api_key
-            
-            self.llm = ChatOpenAI(
-                openai_api_key=self.api_key,
-                model_name="gpt-3.5-turbo",
+            self.llm = config_local.crear_llm(
                 temperature=0.0,
-                max_tokens=2048,  # Respuestas mas completas
-                request_timeout=90
+                max_tokens=2048,   # Respuestas mas completas
+                request_timeout=120
             )
             logger.info("✅ LLM creado")
         except Exception as e:

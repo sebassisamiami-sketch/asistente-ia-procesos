@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block nav_copiloto %}active{% endblock %}
+{% block title %}Copiloto de reunión{% endblock %}
+{% block content %}
+<h1>Copiloto de reunión</h1>
+<p class="sub">Graba una pregunta por micrófono; se transcribe en local (faster-whisper) y el asistente responde con el contexto del proyecto.</p>
+
+<div class="card">
+  <div class="row" style="align-items:center">
+    <button class="btn" id="btnGrabar" type="button">🎙️ Grabar</button>
+    <button class="btn btn-danger" id="btnParar" type="button" disabled>⏹️ Detener</button>
+    <label class="toggle" style="margin-left:auto">
+      Modo:
+      <select id="modo" style="width:auto">
+        <option value="decir">Respuesta para leer en voz alta</option>
+        <option value="explicar">Explicación técnica</option>
+      </select>
+    </label>
+  </div>
+  <p class="muted" id="estado" style="margin-top:10px">Listo.</p>
+</div>
+
+<div class="card" id="resultado" style="display:none">
+  <h2 style="margin-top:0">Pregunta transcrita</h2>
+  <p id="pregunta" class="muted"></p>
+  <h2>Respuesta</h2>
+  <div class="md" id="respuesta"></div>
+</div>
+
+<script>
+  window.URLS = { copiloto: "{{ url_for('api_copiloto') }}" };
+</script>
+<script src="{{ url_for('static', filename='copiloto.js') }}"></script>
+{% endblock %}

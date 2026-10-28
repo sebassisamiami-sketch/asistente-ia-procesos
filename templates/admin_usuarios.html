@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block nav_usuarios %}active{% endblock %}
+{% block title %}Usuarios · Admin{% endblock %}
+{% block content %}
+<h1>Usuarios</h1>
+<p class="sub">El administrador inicial se define con <code>ADMIN_USER</code> / <code>ADMIN_PASSWORD</code> en el <code>.env</code>. Aquí creas usuarios adicionales.</p>
+
+<div class="card">
+  <h2 style="margin-top:0">Crear usuario</h2>
+  <form method="post" class="row">
+    <input type="hidden" name="accion" value="crear">
+    <div class="field" style="flex:1;min-width:160px"><label>Usuario</label><input name="usuario" required></div>
+    <div class="field" style="flex:1;min-width:160px"><label>Contraseña</label><input name="password" type="password" required></div>
+    <div class="field" style="min-width:150px"><label>Rol</label>
+      <select name="rol">{% for r in roles %}<option>{{ r }}</option>{% endfor %}</select>
+    </div>
+    <div class="field"><button class="btn" type="submit">➕ Crear</button></div>
+  </form>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Usuarios creados</h2>
+  <table>
+    <tr><th>Usuario</th><th>Rol</th><th></th></tr>
+    <tr><td><strong>{{ admin_env }}</strong></td><td>Administrador</td><td class="muted">desde .env</td></tr>
+    {% for nombre, d in editables.items() %}
+    <tr>
+      <td>{{ nombre }}</td><td>{{ d.rol }}</td>
+      <td style="text-align:right">
+        <form method="post" onsubmit="return confirm('¿Eliminar {{ nombre }}?')">
+          <input type="hidden" name="accion" value="eliminar">
+          <input type="hidden" name="usuario" value="{{ nombre }}">
+          <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if not editables %}<tr><td colspan="3" class="muted">Aún no has creado usuarios.</td></tr>{% endif %}
+  </table>
+</div>
+{% endblock %}

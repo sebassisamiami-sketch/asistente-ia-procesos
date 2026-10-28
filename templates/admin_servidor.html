@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block nav_servidor %}active{% endblock %}
+{% block title %}Control del servidor · Admin{% endblock %}
+{% block content %}
+<h1>Control del servidor</h1>
+<p class="sub">En mantenimiento, solo el administrador puede entrar.</p>
+
+<div class="card">
+  <p>Estado actual:
+    {% if activo %}<strong style="color:var(--ok)">🟢 Activo</strong>
+    {% else %}<strong style="color:var(--err)">🔴 En mantenimiento</strong>{% endif %}
+  </p>
+  <form method="post" class="row">
+    {% if activo %}
+      <button class="btn btn-danger" name="activar" value="0" type="submit">🔴 Poner en mantenimiento</button>
+    {% else %}
+      <button class="btn" name="activar" value="1" type="submit">🟢 Activar servidor</button>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

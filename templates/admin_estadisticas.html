@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block nav_stats %}active{% endblock %}
+{% block title %}Estadísticas IA · Admin{% endblock %}
+{% block content %}
+<h1>Estadísticas del motor IA</h1>
+<p class="sub">Estado: <strong>{{ estado.estado }}</strong></p>
+
+{% set e = estado.estadisticas %}
+<div class="kpi">
+  <div class="box"><div class="num">{{ e.queries_totales or 0 }}</div><div class="lbl">Consultas totales</div></div>
+  <div class="box"><div class="num">{{ e.queries_exitosas or 0 }}</div><div class="lbl">Exitosas</div></div>
+  <div class="box"><div class="num">{{ e.queries_fallidas or 0 }}</div><div class="lbl">Fallidas</div></div>
+</div>
+
+<div class="card" style="margin-top:18px">
+  <table>
+    <tr><th>Cadena activa</th><td>{{ '✅' if estado.chain_activa else '—' }}</td></tr>
+    <tr><th>Vectorstore activo</th><td>{{ '✅' if estado.vectorstore_activo else '—' }}</td></tr>
+    <tr><th>Última consulta</th><td>{{ e.ultima_consulta or '—' }}</td></tr>
+  </table>
+</div>
+{% endblock %}

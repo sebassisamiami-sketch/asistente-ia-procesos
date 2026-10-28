@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Asistente IA de Procesos{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">🤖</span>
+      <div>
+        <div class="brand-name">Asistente IA</div>
+        <div class="brand-sub">de Procesos</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="{{ url_for('chat') }}" class="nav-item {% block nav_chat %}{% endblock %}">💬 Chat</a>
+      <a href="{{ url_for('copiloto') }}" class="nav-item {% block nav_copiloto %}{% endblock %}">🎤 Copiloto</a>
+
+      {% if rol == 'Administrador' %}
+      <div class="nav-group">Administración</div>
+      <a href="{{ url_for('admin_pdfs') }}" class="nav-item {% block nav_pdfs %}{% endblock %}">📄 Procesar PDFs</a>
+      <a href="{{ url_for('admin_bd') }}" class="nav-item {% block nav_bd %}{% endblock %}">🗄️ Estado de BD</a>
+      <a href="{{ url_for('admin_usuarios') }}" class="nav-item {% block nav_usuarios %}{% endblock %}">👥 Usuarios</a>
+      <a href="{{ url_for('admin_enlaces') }}" class="nav-item {% block nav_enlaces %}{% endblock %}">🔗 Enlaces de acceso</a>
+      <a href="{{ url_for('admin_accesos') }}" class="nav-item {% block nav_accesos %}{% endblock %}">📋 Registros de acceso</a>
+      <a href="{{ url_for('admin_estadisticas_ia') }}" class="nav-item {% block nav_stats %}{% endblock %}">📊 Estadísticas IA</a>
+      <a href="{{ url_for('admin_video') }}" class="nav-item {% block nav_video %}{% endblock %}">🎬 Video a manual</a>
+      <a href="{{ url_for('admin_servidor') }}" class="nav-item {% block nav_servidor %}{% endblock %}">🖥️ Control del servidor</a>
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="user">
+        <div class="user-name">{{ usuario }}</div>
+        <div class="user-rol">{{ rol }}</div>
+      </div>
+      <div class="provider" title="Proveedor de IA">{{ proveedor }} · {{ modelo }}</div>
+      <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm">Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% if mensajes %}
+        <div class="flashes">
+          {% for cat, msg in mensajes %}
+            <div class="flash flash-{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>
