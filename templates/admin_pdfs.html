@@ -8,11 +8,19 @@
 <div class="card">
   <h2 style="margin-top:0">Subir PDFs</h2>
   <form method="post" action="{{ url_for('admin_pdfs_subir') }}" enctype="multipart/form-data" class="row">
-    <div class="field" style="flex:1;min-width:200px">
-      <label>Sección (carpeta destino)</label>
-      <input name="seccion" placeholder="Ej: Manual Solicitudes" value="Manuales subidos">
+    <div class="field" style="flex:1;min-width:180px">
+      <label>Carpeta destino</label>
+      <select name="destino" id="selDestino"
+        onchange="document.getElementById('nuevaSec').style.display = this.value==='__nueva__' ? 'block' : 'none'">
+        {% for c in carpetas %}<option value="{{ c.nombre }}">{{ c.nombre }}</option>{% endfor %}
+        <option value="__nueva__">Nueva sección…</option>
+      </select>
     </div>
-    <div class="field" style="flex:2;min-width:220px">
+    <div class="field" id="nuevaSec" style="flex:1;min-width:160px;display:{{ 'block' if not carpetas else 'none' }}">
+      <label>Nombre de la nueva sección</label>
+      <input name="seccion_nueva" placeholder="Ej: Manual Nómina">
+    </div>
+    <div class="field" style="flex:1.5;min-width:200px">
       <label>Archivos PDF</label>
       <input type="file" name="pdfs" accept="application/pdf" multiple required>
     </div>

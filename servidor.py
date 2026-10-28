@@ -277,6 +277,15 @@ def _carpetas_con_conteo():
     return datos
 
 
+def _recargar_motor():
+    """Hace que el chat vea los documentos recién indexados sin reiniciar."""
+    try:
+        from ia_motor import obtener_motor
+        obtener_motor().recargar_vectorstore()
+    except Exception as e:
+        logger.warning(f"No se pudo recargar el motor: {e}")
+
+
 @app.route("/admin/pdfs", methods=["GET", "POST"])
 @admin_required
 def admin_pdfs():
@@ -291,6 +300,7 @@ def admin_pdfs():
         for c in destino:
             res = processor.procesar_carpeta(c, c)
             resultado.append({"carpeta": c, **res})
+        _recargar_motor()
         flash("Indexación completada.", "ok")
     return render_template("admin_pdfs.html", carpetas=_carpetas_con_conteo(), resultado=resultado)
 
@@ -300,9 +310,17 @@ def admin_pdfs():
 def admin_pdfs_subir():
     from werkzeug.utils import secure_filename
     archivos = request.files.getlist("pdfs")
-    seccion = (request.form.get("seccion") or "Manuales subidos").strip() or "Manuales subidos"
-    # Carpeta de la sección (en la raíz del proyecto)
-    carpeta = secure_filename(seccion) or "Manuales_subidos"
+
+    # Destino: una carpeta existente elegida en el desplegable, o una nueva.
+    elegida = (request.form.get("destino") or "").strip()
+    nueva = (request.form.get("seccion_nueva") or "").strip()
+    existentes = bw.detectar_carpetas_documentos()
+    if elegida and elegida != "__nueva__" and elegida in existentes:
+        seccion = elegida                 # carpeta existente -> se usa tal cual
+        carpeta = elegida
+    else:
+        seccion = nueva or "Manuales subidos"
+        carpeta = secure_filename(seccion) or "Manuales_subidos"
     destino = Path(carpeta)
     destino.mkdir(parents=True, exist_ok=True)
 
@@ -323,9 +341,10 @@ def admin_pdfs_subir():
     # Indexar de una vez la sección subida
     from procesar_datos import DataProcessor
     res = DataProcessor().procesar_carpeta(str(destino), carpeta)
+    _recargar_motor()
     if res.get("exito"):
         flash(f"Se subieron {guardados} PDF(s) a «{seccion}» y se indexaron "
-              f"({res.get('chunks_creados', 0)} fragmentos).", "ok")
+              f"({res.get('chunks_creados', 0)} fragmentos). Ya puedes preguntarles en el chat.", "ok")
     else:
         flash(f"Se subieron {guardados} PDF(s), pero falló la indexación: {res.get('error')}", "error")
     return redirect(url_for("admin_pdfs"))

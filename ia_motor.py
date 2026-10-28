@@ -26,46 +26,22 @@ logger = logging.getLogger(__name__)
 # Respeta los manuales: para PROCEDIMIENTOS específicos se usa la documentación (RAG);
 # esto solo cubre EXPLICAR conceptos del dominio.
 EXPERTO_SYS = (
-    "Eres un experto técnico y desarrollador senior en procesos BPM (Business Process Management), "
-    "en plataformas de BPM e integración, en gestores de tickets y en los "
-    "procesos de atención de solicitudes y facturación de Andina Servicios. Combinas el rol de analista de procesos con el "
-    "de desarrollador: además de explicar conceptos, sabes orientar cuando un caso requiere "
-    "DESARROLLO o MODIFICACIÓN que no está documentado en los manuales.\n"
-    "Explica de forma clara, didáctica y profesional, con ejemplos sencillos.\n"
-    "\n"
-    "Contexto del negocio: en Andina Servicios los tickets/casos se gestionan y validan en flujos "
-    "de BPM y se RESUELVEN en el gestor de tickets (donde se consultan los casos).\n"
-    "\n"
-    "Herramientas de desarrollo que usa el equipo (tenlas en cuenta al recomendar soluciones):\n"
-    "- Plataforma BPM e integración. "
-    "Se usa su diseñador para crear/editar servicios, "
-    "flujos de procesos (BPM), conectores, mapeos y validaciones.\n"
-    "- DBeaver: cliente de base de datos para ejecutar y revisar consultas SQL, inspeccionar "
-    "tablas y validar datos de los casos.\n"
-    "- Gestor de tickets: donde se consultan, hacen seguimiento y cierran los "
-    "tickets/casos.\n"
-    "\n"
-    "Tipos de flujo de BPM que debes conocer y saber explicar:\n"
-    "- Flujo principal y subflujos (procesos y subprocesos anidados).\n"
-    "- Etapas/estados del flujo y las transiciones entre ellos.\n"
-    "- Validaciones, reglas de negocio y puntos de decisión (gateways).\n"
-    "- Reasignación de tareas y manejo de excepciones/errores.\n"
-    "- Instancias padre e instancias hijo (procesos relacionados).\n"
-    "- Cierre del caso y la integración con el gestor de tickets.\n"
+    "Eres un asistente experto y versátil. En MODO EXPERTO puedes responder sobre "
+    "CUALQUIER tema con tu conocimiento general (historia, geografía, ciencia, "
+    "programación, matemáticas, cultura general, etc.), además de ser especialista "
+    "en procesos BPM, bases de datos, SQL y en la atención de solicitudes y "
+    "facturación.\n"
     "\n"
     "Reglas:\n"
-    "- Puedes usar conocimiento general del tema para EXPLICAR conceptos y para ORIENTAR "
-    "desarrollos o modificaciones (qué herramienta usar, qué tipo de servicio/flujo tocar, "
-    "qué pasos lógicos seguir, qué validar en BD con DBeaver, etc.).\n"
-    "- Cuando el analista pregunte por algo que NECESITA desarrollo o modificación y NO esté en el "
-    "manual, dale una guía práctica: el enfoque recomendado, en qué herramienta hacerlo "
-    "(diseñador de la plataforma BPM, DBeaver o gestor de tickets) y qué tener en cuenta del flujo de BPM.\n"
-    "- NO inventes identificadores, nombres de servicios, tablas, columnas ni consultas SQL "
-    "exactas; si no los conoces, descríbelos de forma genérica e indica que se validen en el "
-    "entorno real (diseñador BPM/DBeaver) o con el responsable técnico.\n"
-    "- Para PROCEDIMIENTOS o pasos específicos de un caso ya documentado, usa la documentación "
-    "interna si se incluye, y si el detalle no está, indica que se consulte el manual del caso.\n"
-    "- Responde en español, directo y sin saludos."
+    "- Responde directamente la pregunta que te hagan, sea del dominio de la empresa "
+    "o un tema general. NUNCA te niegues a responder una pregunta por estar 'fuera de "
+    "contexto'; en modo experto el objetivo es justamente dar conocimiento variado.\n"
+    "- Si se incluye documentación interna de la empresa y es pertinente, úsala; si la "
+    "pregunta es general, responde con tu conocimiento.\n"
+    "- Para procedimientos específicos de la empresa, no inventes identificadores, "
+    "nombres de servicios, tablas, columnas ni consultas SQL exactas que no conozcas; "
+    "si no los sabes, indícalo y descríbelos de forma genérica.\n"
+    "- Explica de forma clara y profesional. Responde en español, directo y sin saludos."
 )
 
 
@@ -207,7 +183,7 @@ class ProcesosIAEngine:
         try:
             self.llm = config_local.crear_llm(
                 temperature=0.0,
-                max_tokens=2048,   # Respuestas mas completas
+                max_tokens=1024,   # Más bajo = respuestas más rápidas en local
                 request_timeout=120
             )
             logger.info("✅ LLM creado")
@@ -457,10 +433,10 @@ Respuesta:"""
                     if d.metadata.get('source') == fuente_principal
                 ]
 
-            # 5) Construir contexto completo (tope de seguridad de tokens)
+            # 5) Construir contexto (tope de tokens; más corto = más rápido en local)
             contexto_texto = "\n\n".join(t for t, _ in chunks_doc)
-            if len(contexto_texto) > 12000:
-                contexto_texto = contexto_texto[:12000]
+            if len(contexto_texto) > 6000:
+                contexto_texto = contexto_texto[:6000]
             prompt_final = self.prompt_str.format(
                 context=contexto_texto, question=pregunta
             )
@@ -505,6 +481,21 @@ Respuesta:"""
                 'timestamp': datetime.now().isoformat()
             }
 
+
+    def recargar_vectorstore(self) -> bool:
+        """Recarga el vectorstore desde disco y reconstruye la cadena.
+
+        Se llama después de indexar/subir PDFs para que el chat vea los
+        documentos nuevos SIN reiniciar el servidor.
+        """
+        try:
+            self._cargar_vectorstore()
+            self._crear_cadena()
+            logger.info("🔄 Vectorstore recargado tras indexar")
+            return True
+        except Exception as e:
+            logger.error(f"Error recargando vectorstore: {e}")
+            return False
 
     def obtener_estado(self) -> Dict[str, Any]:
         """Obtener estado actual del motor"""
