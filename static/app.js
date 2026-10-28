@@ -27,7 +27,6 @@ scrollAbajo();
 function burbuja(tipo, texto, { tag, raw } = {}) {
   const wrap = document.createElement("div");
   wrap.className = "msg " + tipo;
-  const avatar = tipo === "user" ? "🧑" : "🤖";
   const md = document.createElement("div");
   md.className = "md";
   md.innerHTML = raw ? texto : formatear(texto);
@@ -39,7 +38,6 @@ function burbuja(tipo, texto, { tag, raw } = {}) {
     sp.className = "tag"; sp.textContent = tag;
     bubble.appendChild(sp);
   }
-  wrap.innerHTML = '<div class="avatar">' + avatar + "</div>";
   wrap.appendChild(bubble);
   log.appendChild(wrap);
   scrollAbajo();

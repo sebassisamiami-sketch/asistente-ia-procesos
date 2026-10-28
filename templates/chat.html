@@ -20,19 +20,16 @@
   <div class="chat-log" id="log">
     {% if not historial %}
       <div class="msg assistant">
-        <div class="avatar">🤖</div>
         <div class="bubble"><div class="md">¡Hola! Pregúntame por un caso: **radicar una solicitud**, **reasignar un caso bloqueado**, **cerrar un caso**, **corregir datos de una factura** o **validar pagos no aplicados**.</div></div>
       </div>
     {% endif %}
     {% for m in historial %}
       {% if m.mensaje_original %}
       <div class="msg user">
-        <div class="avatar">🧑</div>
         <div class="bubble"><div class="md">{{ m.mensaje_original }}</div></div>
       </div>
       {% endif %}
       <div class="msg assistant">
-        <div class="avatar">🤖</div>
         <div class="bubble">
           <div class="md">{{ m.respuesta }}</div>
           {% if m.modo %}<span class="tag">{{ m.modo }}</span>{% endif %}
