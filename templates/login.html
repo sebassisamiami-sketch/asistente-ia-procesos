@@ -9,9 +9,10 @@
 <body>
   <div class="login-bg">
     <div class="login-card">
-      <div class="center" style="font-size:34px">🤖</div>
-      <h1>Asistente IA de Procesos</h1>
-      <p class="sub">Inicia sesión para continuar</p>
+      <div class="brand-emoji">🤖</div>
+      <div class="app-name">ASISTENTE IA DE PROCESOS</div>
+      <div class="ms-title">Iniciar sesión</div>
+      <div class="ms-sub">Usa tu cuenta de la demo</div>
 
       {% with mensajes = get_flashed_messages(with_categories=true) %}
         {% for cat, msg in mensajes %}
@@ -28,7 +29,7 @@
           <label>Contraseña</label>
           <input name="password" type="password" autocomplete="current-password" placeholder="••••••••">
         </div>
-        <button class="btn" style="width:100%" type="submit">Entrar</button>
+        <button class="btn" type="submit">Entrar</button>
       </form>
 
       <p class="muted center" style="margin-top:18px">
