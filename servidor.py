@@ -268,22 +268,67 @@ def admin_usuarios():
                            roles=["Analista", "Administrador"])
 
 
+def _carpetas_con_conteo():
+    """Lista de carpetas con PDFs y cuántos PDFs tiene cada una."""
+    datos = []
+    for c in bw.detectar_carpetas_documentos():
+        n = len(list(Path(c).glob("**/*.pdf")))
+        datos.append({"nombre": c, "pdfs": n})
+    return datos
+
+
 @app.route("/admin/pdfs", methods=["GET", "POST"])
 @admin_required
 def admin_pdfs():
-    carpetas = bw.detectar_carpetas_documentos()
     resultado = None
     if request.method == "POST":
         from procesar_datos import DataProcessor
         processor = DataProcessor()
         objetivo = request.form.get("carpeta")  # None/"__todas__" o una carpeta
         resultado = []
+        carpetas = bw.detectar_carpetas_documentos()
         destino = carpetas if objetivo in (None, "__todas__") else [objetivo]
         for c in destino:
             res = processor.procesar_carpeta(c, c)
             resultado.append({"carpeta": c, **res})
         flash("Indexación completada.", "ok")
-    return render_template("admin_pdfs.html", carpetas=carpetas, resultado=resultado)
+    return render_template("admin_pdfs.html", carpetas=_carpetas_con_conteo(), resultado=resultado)
+
+
+@app.route("/admin/pdfs/subir", methods=["POST"])
+@admin_required
+def admin_pdfs_subir():
+    from werkzeug.utils import secure_filename
+    archivos = request.files.getlist("pdfs")
+    seccion = (request.form.get("seccion") or "Manuales subidos").strip() or "Manuales subidos"
+    # Carpeta de la sección (en la raíz del proyecto)
+    carpeta = secure_filename(seccion) or "Manuales_subidos"
+    destino = Path(carpeta)
+    destino.mkdir(parents=True, exist_ok=True)
+
+    guardados = 0
+    for f in archivos:
+        if not f or not f.filename:
+            continue
+        if not f.filename.lower().endswith(".pdf"):
+            continue
+        nombre = secure_filename(f.filename) or f"doc_{guardados}.pdf"
+        f.save(str(destino / nombre))
+        guardados += 1
+
+    if guardados == 0:
+        flash("No se subió ningún PDF válido.", "error")
+        return redirect(url_for("admin_pdfs"))
+
+    # Indexar de una vez la sección subida
+    from procesar_datos import DataProcessor
+    res = DataProcessor().procesar_carpeta(str(destino), carpeta)
+    if res.get("exito"):
+        flash(f"Se subieron {guardados} PDF(s) a «{seccion}» y se indexaron "
+              f"({res.get('chunks_creados', 0)} fragmentos).", "ok")
+    else:
+        flash(f"Se subieron {guardados} PDF(s), pero falló la indexación: {res.get('error')}", "error")
+    return redirect(url_for("admin_pdfs"))
 
 
 @app.route("/admin/bd", methods=["GET", "POST"])

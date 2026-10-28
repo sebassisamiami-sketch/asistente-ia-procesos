@@ -413,13 +413,18 @@ Respuesta:"""
                 fuente_principal = ultima_fuente
             else:
                 # Caso nuevo o primera consulta -> validar relevancia
-                if not docs or (best_score is not None and best_score > 0.55):
+                # Solo rechazamos si NO hay documentos indexados. El umbral de
+                # distancia absoluto se eliminó porque dependía de los embeddings
+                # de OpenAI; con embeddings locales (nomic) la escala es distinta,
+                # así que confiamos en el re-ranking por título para elegir el caso.
+                if not docs:
                     self.estadisticas['queries_exitosas'] += 1
                     return {
                         'exito': True,
                         'respuesta': (
-                            "No encontré un caso que coincida con tu consulta. "
-                            "¿Puedes indicarme el proceso? Por ejemplo: radicar una solicitud, "
+                            "Aún no hay manuales indexados (o no encontré un caso que coincida). "
+                            "Si eres administrador, ve a Procesar PDFs e indexa las carpetas. "
+                            "Procesos disponibles: radicar una solicitud, "
                             "reasignar un caso bloqueado, cerrar un caso, "
                             "corregir datos de una factura o validar pagos no aplicados."
                         ),

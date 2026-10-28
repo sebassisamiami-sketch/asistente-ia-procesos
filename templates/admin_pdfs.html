@@ -6,21 +6,38 @@
 <p class="sub">Indexa los manuales en la base vectorial (ChromaDB) con los embeddings locales. Cada carpeta de la raíz con PDFs es una sección.</p>
 
 <div class="card">
+  <h2 style="margin-top:0">Subir PDFs</h2>
+  <form method="post" action="{{ url_for('admin_pdfs_subir') }}" enctype="multipart/form-data" class="row">
+    <div class="field" style="flex:1;min-width:200px">
+      <label>Sección (carpeta destino)</label>
+      <input name="seccion" placeholder="Ej: Manual Solicitudes" value="Manuales subidos">
+    </div>
+    <div class="field" style="flex:2;min-width:220px">
+      <label>Archivos PDF</label>
+      <input type="file" name="pdfs" accept="application/pdf" multiple required>
+    </div>
+    <div class="field"><button class="btn" type="submit">Subir e indexar</button></div>
+  </form>
+  <p class="muted" style="margin:0">Los PDF se guardan en la carpeta de la sección y se indexan automáticamente.</p>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Secciones existentes</h2>
   <form method="post" style="margin-bottom:14px">
-    <button class="btn" type="submit" name="carpeta" value="__todas__">🔄 Procesar TODAS las carpetas</button>
+    <button class="btn" type="submit" name="carpeta" value="__todas__">Procesar TODAS las carpetas</button>
   </form>
   <table>
     <tr><th>Carpeta</th><th>PDFs</th><th></th></tr>
     {% for c in carpetas %}
     <tr>
-      <td>{{ c }}</td>
-      <td class="muted">—</td>
+      <td>{{ c.nombre }}</td>
+      <td>{{ c.pdfs }}</td>
       <td style="text-align:right">
-        <form method="post"><button class="btn btn-ghost btn-sm" name="carpeta" value="{{ c }}">Procesar</button></form>
+        <form method="post"><button class="btn btn-ghost btn-sm" name="carpeta" value="{{ c.nombre }}">Procesar</button></form>
       </td>
     </tr>
     {% endfor %}
-    {% if not carpetas %}<tr><td colspan="3" class="muted">No se encontraron carpetas con PDFs.</td></tr>{% endif %}
+    {% if not carpetas %}<tr><td colspan="3" class="muted">No hay carpetas con PDFs todavía. Sube algunos arriba.</td></tr>{% endif %}
   </table>
 </div>
 
@@ -34,7 +51,7 @@
       <td>{{ r.carpeta }}</td>
       <td>{{ r.archivos_procesados if r.archivos_procesados is defined else '—' }}</td>
       <td>{{ r.chunks_creados if r.chunks_creados is defined else '—' }}</td>
-      <td>{{ '✅ OK' if r.exito else '❌ ' ~ (r.error or 'error') }}</td>
+      <td>{{ '✓ OK' if r.exito else '✗ ' ~ (r.error or 'error') }}</td>
     </tr>
     {% endfor %}
   </table>

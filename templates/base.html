@@ -9,27 +9,59 @@
 <body class="app">
   <aside class="sidebar">
     <div class="brand">
-      <span class="brand-mark">🤖</span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+      </span>
       <div>
-        <div class="brand-name">Asistente IA</div>
-        <div class="brand-sub">de Procesos</div>
+        <div class="brand-name">Asistente de Procesos</div>
+        <div class="brand-sub">Andina Servicios</div>
       </div>
     </div>
 
     <nav class="nav">
-      <a href="{{ url_for('chat') }}" class="nav-item {% block nav_chat %}{% endblock %}">💬 Chat</a>
-      <a href="{{ url_for('copiloto') }}" class="nav-item {% block nav_copiloto %}{% endblock %}">🎤 Copiloto</a>
+      <a href="{{ url_for('chat') }}" class="nav-item {% block nav_chat %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Chat
+      </a>
+      <a href="{{ url_for('copiloto') }}" class="nav-item {% block nav_copiloto %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        Copiloto
+      </a>
 
       {% if rol == 'Administrador' %}
       <div class="nav-group">Administración</div>
-      <a href="{{ url_for('admin_pdfs') }}" class="nav-item {% block nav_pdfs %}{% endblock %}">📄 Procesar PDFs</a>
-      <a href="{{ url_for('admin_bd') }}" class="nav-item {% block nav_bd %}{% endblock %}">🗄️ Estado de BD</a>
-      <a href="{{ url_for('admin_usuarios') }}" class="nav-item {% block nav_usuarios %}{% endblock %}">👥 Usuarios</a>
-      <a href="{{ url_for('admin_enlaces') }}" class="nav-item {% block nav_enlaces %}{% endblock %}">🔗 Enlaces de acceso</a>
-      <a href="{{ url_for('admin_accesos') }}" class="nav-item {% block nav_accesos %}{% endblock %}">📋 Registros de acceso</a>
-      <a href="{{ url_for('admin_estadisticas_ia') }}" class="nav-item {% block nav_stats %}{% endblock %}">📊 Estadísticas IA</a>
-      <a href="{{ url_for('admin_video') }}" class="nav-item {% block nav_video %}{% endblock %}">🎬 Video a manual</a>
-      <a href="{{ url_for('admin_servidor') }}" class="nav-item {% block nav_servidor %}{% endblock %}">🖥️ Control del servidor</a>
+      <a href="{{ url_for('admin_pdfs') }}" class="nav-item {% block nav_pdfs %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Procesar PDFs
+      </a>
+      <a href="{{ url_for('admin_bd') }}" class="nav-item {% block nav_bd %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Estado de BD
+      </a>
+      <a href="{{ url_for('admin_usuarios') }}" class="nav-item {% block nav_usuarios %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuarios
+      </a>
+      <a href="{{ url_for('admin_enlaces') }}" class="nav-item {% block nav_enlaces %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Enlaces de acceso
+      </a>
+      <a href="{{ url_for('admin_accesos') }}" class="nav-item {% block nav_accesos %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+        Registros de acceso
+      </a>
+      <a href="{{ url_for('admin_estadisticas_ia') }}" class="nav-item {% block nav_stats %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Estadísticas IA
+      </a>
+      <a href="{{ url_for('admin_video') }}" class="nav-item {% block nav_video %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Video a manual
+      </a>
+      <a href="{{ url_for('admin_servidor') }}" class="nav-item {% block nav_servidor %}{% endblock %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        Control del servidor
+      </a>
       {% endif %}
     </nav>
 
